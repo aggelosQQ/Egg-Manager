@@ -16,7 +16,6 @@ bot.command(:help) do |event|
 		embed.description = 'Prefix: ``_``
 Info section is under construction.'
 		embed.color = 16_722_454
-		embed.footer = 'Running version:', version
 	end
 end
 
@@ -28,21 +27,16 @@ end
 
 
 bot.command(:avatar, min_args: 1, max_args: 1) do |event, user|
-next unless $settings[event.server.id.to_s]["ptr"]
 user = user[2..-1]
 user = user.chomp('>')
     begin
-        tagged_user = $bot.user(user);
-        avatar = tagged_user.avatar_url
-        avatar = tagged_user.avatar_url[0..-4]
-        event.respond "#{tagged_user.mention}'s avatar URL is #{avatar}webp?size=1024"    
+        tagged_user = bot.user(user);
+        event.respond "#{tagged_user.mention}'s avatar URL is #{tagged_user.avatar_url}"
     rescue
-        # If the user has a nick the ID will be <@!id>, so this will remove that !, and fail if that also fails.
         begin
             user = user[1..-1]
-            tagged_user = $bot.user(user);
-            avatar = tagged_user.avatar_url[0..-4]
-            event.respond "#{tagged_user.mention}'s avatar URL is #{avatar}webp?size=1024"
+            tagged_user = bot.user(user);
+            event.respond "#{tagged_user.mention}'s avatar URL is #{tagged_user.avatar_url}"
         rescue
             event.respond "That's an invalid user."
         end
