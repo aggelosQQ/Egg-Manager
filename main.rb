@@ -48,6 +48,17 @@ bot.command(:talk) do |event, *args|
 	event.respond args.join(' ')
 end
 
+bot.command(:ping) do |event|
+        now = Time.now
+        timestamp = event.timestamp
+        diff = (now - timestamp) / 1_000_000
+        event.channel.send_embed do |embed|
+            embed.title = 'Egg Manager Ping'
+            embed.description = "I ain't gone, but I'm pinging in **#{diff}** ms.. is that good?"
+            embed.color = 1_151_202
+        end
+end
+
 bot.member_join do |event|
 	event.user.add_role(340470911910281216)
 end
