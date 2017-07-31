@@ -59,6 +59,15 @@ bot.command(:ping) do |event|
         end
 end
 
+bot.command(:mnpn) do |event|
+    event.channel.send_embed do |embed|
+        embed.title = 'Mnpn Support Discord'
+        embed.description = "Join it: **https://discord.gg/Ww74Xjh**"
+        embed.color = 1_151_202
+    end
+end
+
+
 bot.member_join do |event|
 	event.user.add_role(340470911910281216)
 end
