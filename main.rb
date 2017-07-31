@@ -135,17 +135,17 @@ bot.command(:prune, min_args: 1, max_args: 1, usage: ".prune <2-100>") do |event
 	begin
 		i = Integer(args)
 	rescue ArgumentError
-		event.respond "That's not a number."
+		event.respond "#{event.author.mention}, That's not a number."
 		next
 	end
 		if i < 2 || i > 100
-			event.respond "You can only prune messages between 2-100."
+			event.respond "#{event.author.mention}, You can only prune messages between 2-100."
 			next
 		end
 		event.channel.prune(i)
-		event.respond "#{event.author.mention}, I pruned #{i} messages."
+		event.respond "#{event.author.mention}, I pruned #{i} message(s)."
 	else
-		event.respond "Only Moderators or higher can prune."
+		event.respond "#{event.author.mention}, Only Moderators or higher can prune."
 	end
 end
 
