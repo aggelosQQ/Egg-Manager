@@ -71,6 +71,23 @@ bot.member_join do |event|
 	event.user.add_role(340470911910281216)
 end
 
+bot.command(:team, min_args: 1, max_args: 1) do |event, args|
+	begin
+		event.message.delete
+		
+		if args == "hard-boiled"
+			event.user.add_role(340169246774525952)
+		elsif args == "soft-boiled"
+			event.user.add_role(340174198330621952)
+		else
+			event.respond "I couldn't find that team."
+		end
+		event.respond "#{event.user.mention}, I added you to that team."
+	rescue
+		event.respond "I couldn't add you to the team, I might not have enough permission."
+	end
+end
+
 trap('INT') do
     exit
 end
