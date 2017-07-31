@@ -82,28 +82,27 @@ bot.command(:team, usage: ".team hard-boiled | soft-boiled") do |event, *args|
 	end
 	if event.channel.id == 340175912391802880 || event.channel.id == 341297868818350090
 		begin
-			event.message.delete
-				begin # First of all, remove roles.
-					if args.sample == "hard-boiled" || args.sample == "soft-boiled"
-						if event.user.roles.include?(340169246774525952) # Hard
-							event.user.remove_role(340169246774525952) # Hard
-						end
-						if event.user.roles.include?(340174198330621952) # Soft
-							event.user.remove_role(340174198330621952) # Soft
-						end
-						if event.user.roles.include?(340169246774525952) # If the bot changes team the opposite way it will fail to remove the role. This fixes that issue.
-							event.user.remove_role(340169246774525952) # Hard
-						end
-						if event.user.roles.include?(340470911910281216) # Regular Egg
-							event.user.remove_role(340470911910281216) # Regular Egg
-						end
-					else # The argument was invalid.
-						event.respond "I couldn't find that team."
-						next
+			begin # First of all, remove roles.
+				if args.sample == "hard-boiled" || args.sample == "soft-boiled"
+					if event.user.roles.include?(340169246774525952) # Hard
+						event.user.remove_role(340169246774525952) # Hard
 					end
-				rescue
-					event.respond "I couldn't remove roles."
+					if event.user.roles.include?(340174198330621952) # Soft
+						event.user.remove_role(340174198330621952) # Soft
+					end
+					if event.user.roles.include?(340169246774525952) # If the bot changes team the opposite way it will fail to remove the role. This fixes that issue.
+						event.user.remove_role(340169246774525952) # Hard
+					end
+					if event.user.roles.include?(340470911910281216) # Regular Egg
+						event.user.remove_role(340470911910281216) # Regular Egg
+					end
+				else # The argument was invalid.
+					event.respond "I couldn't find that team."
+					next
 				end
+			rescue
+				event.respond "I couldn't remove roles."
+			end
 			if args.sample == "hard-boiled"
 				event.user.add_role(340169246774525952) # Hard
 				event.user.pm "You have been added to the team of Hard Boiled Eggs :egg:"
@@ -118,6 +117,35 @@ bot.command(:team, usage: ".team hard-boiled | soft-boiled") do |event, *args|
 		end
 	else
 		event.respond "This command may only be used on the specified channels. (<#340175912391802880> | <#341297868818350090>)"
+	end
+end
+
+bot.message do |event|
+	if event.channel.id == 340175912391802880 || event.channel.id == 341297868818350090
+		unless event.author.roles.include?(340131665382998016)
+			event.message.delete
+		end
+	end
+end
+
+bot.command(:prune, min_args: 1, max_args: 1, usage: ".prune <2-100>") do |event, args|
+	event.message.delete
+	if event.author.roles.include?(340131665382998016) || event.author.roles.include?(340131669354741762)
+	i = 0
+	begin
+		i = Integer(args)
+	rescue ArgumentError
+		event.respond "That's not a number."
+		next
+	end
+		if i < 2 || i > 100
+			event.respond "You can only prune messages between 2-100."
+			next
+		end
+		event.channel.prune(i)
+		event.respond "#{event.author.mention}, I pruned #{i} messages."
+	else
+		event.respond "Only Moderators or higher can prune."
 	end
 end
 
