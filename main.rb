@@ -2,7 +2,7 @@ require 'discordrb'
 
 token = File.read 'token.txt'
 CLIENT_ID = 341302744222531594
-version = '1.0'
+version = '1.1'
 
 bot = Discordrb::Commands::CommandBot.new token: token, client_id: CLIENT_ID, prefix: '.'
 
@@ -74,15 +74,32 @@ end
 bot.command(:team, min_args: 1, max_args: 1) do |event, args|
 	begin
 		event.message.delete
-		
+			begin # First of all, remove roles.
+				if args == "hard-boiled" || args == "soft-boiled"
+					if event.user.roles.include?(340169246774525952) # Hard
+						event.user.remove_role(340169246774525952) # Hard
+					end
+					if event.user.roles.include?(340174198330621952) # Soft
+						event.user.remove_role(340174198330621952) # Soft
+					end
+					if event.user.roles.include?(340470911910281216) # Regular Egg
+						event.user.remove_role(340470911910281216) # Regular Egg
+					end
+				else # The argument was invalid.
+					event.respond "I couldn't find that team."
+				end
+			rescue
+				event.respond "I couldn't remove roles."
+			end
 		if args == "hard-boiled"
-			event.user.add_role(340169246774525952)
+			event.user.add_role(340169246774525952) # Hard
+			event.user.pm "You have been added to the team of Hard Boiled Eggs :egg:"
 		elsif args == "soft-boiled"
-			event.user.add_role(340174198330621952)
+			event.user.add_role(340174198330621952) # Soft
+			event.user.pm "You have been added to the team of Soft Boiled Eggs :egg:"
 		else
-			event.respond "I couldn't find that team."
+			event.respond "I couldn't find that team."	
 		end
-		event.respond "#{event.user.mention}, I added you to that team."
 	rescue
 		event.respond "I couldn't add you to the team, I might not have enough permission."
 	end
