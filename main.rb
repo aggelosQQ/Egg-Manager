@@ -2,7 +2,7 @@ require 'discordrb'
 
 token = File.read 'token.txt'
 CLIENT_ID = 341302744222531594
-version = '1.1'
+version = '1.2'
 
 bot = Discordrb::Commands::CommandBot.new token: token, client_id: CLIENT_ID, prefix: '.'
 
@@ -71,37 +71,53 @@ bot.member_join do |event|
 	event.user.add_role(340470911910281216)
 end
 
-bot.command(:team, min_args: 1, max_args: 1) do |event, args|
-	begin
-		event.message.delete
-			begin # First of all, remove roles.
-				if args == "hard-boiled" || args == "soft-boiled"
-					if event.user.roles.include?(340169246774525952) # Hard
-						event.user.remove_role(340169246774525952) # Hard
+bot.command(:team, usage: ".team hard-boiled | soft-boiled") do |event, *args|
+	if args.length == 0 || args.length > 1
+		event.respond "Usage: `.team hard-boiled | soft-boiled`"
+		next
+	end
+	if event.channel.private?
+		event.respond "I can't do that in DMs.. Here's an empathy egg: :egg:"
+		next
+	end
+	if event.channel.id == 340175912391802880 || event.channel.id == 341297868818350090
+		begin
+			event.message.delete
+				begin # First of all, remove roles.
+					if args.sample == "hard-boiled" || args.sample == "soft-boiled"
+						if event.user.roles.include?(340169246774525952) # Hard
+							event.user.remove_role(340169246774525952) # Hard
+						end
+						if event.user.roles.include?(340174198330621952) # Soft
+							event.user.remove_role(340174198330621952) # Soft
+						end
+						if event.user.roles.include?(340169246774525952) # If the bot changes team the opposite way it will fail to remove the role. This fixes that issue.
+							event.user.remove_role(340169246774525952) # Hard
+						end
+						if event.user.roles.include?(340470911910281216) # Regular Egg
+							event.user.remove_role(340470911910281216) # Regular Egg
+						end
+					else # The argument was invalid.
+						event.respond "I couldn't find that team."
+						next
 					end
-					if event.user.roles.include?(340174198330621952) # Soft
-						event.user.remove_role(340174198330621952) # Soft
-					end
-					if event.user.roles.include?(340470911910281216) # Regular Egg
-						event.user.remove_role(340470911910281216) # Regular Egg
-					end
-				else # The argument was invalid.
-					event.respond "I couldn't find that team."
+				rescue
+					event.respond "I couldn't remove roles."
 				end
-			rescue
-				event.respond "I couldn't remove roles."
+			if args.sample == "hard-boiled"
+				event.user.add_role(340169246774525952) # Hard
+				event.user.pm "You have been added to the team of Hard Boiled Eggs :egg:"
+			elsif args.sample == "soft-boiled"
+				event.user.add_role(340174198330621952) # Soft
+				event.user.pm "You have been added to the team of Soft Boiled Eggs :egg:"
+			else
+				event.respond "I couldn't find that team, but I removed your roles."	
 			end
-		if args == "hard-boiled"
-			event.user.add_role(340169246774525952) # Hard
-			event.user.pm "You have been added to the team of Hard Boiled Eggs :egg:"
-		elsif args == "soft-boiled"
-			event.user.add_role(340174198330621952) # Soft
-			event.user.pm "You have been added to the team of Soft Boiled Eggs :egg:"
-		else
-			event.respond "I couldn't find that team."	
+		rescue
+			event.respond "I couldn't add you to the team, I might not have enough permission."
 		end
-	rescue
-		event.respond "I couldn't add you to the team, I might not have enough permission."
+	else
+		event.respond "This command may only be used on the specified channels. (<#340175912391802880> | <#341297868818350090>)"
 	end
 end
 
