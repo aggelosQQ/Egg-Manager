@@ -27,8 +27,7 @@ end
 
 
 bot.command(:avatar, min_args: 1, max_args: 1) do |event, user|
-user = user[2..-1]
-user = user.chomp('>')
+user = user[2..-2]
     begin
         tagged_user = bot.user(user);
         event.respond "#{tagged_user.mention}'s avatar URL is #{tagged_user.avatar_url}"
