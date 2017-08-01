@@ -149,6 +149,36 @@ bot.command(:prune, min_args: 1, max_args: 1, usage: ".prune <2-100>") do |event
 	end
 end
 
+bot.command(:nsfw) do |event|
+	if event.user.roles.include?(341868734002102274) # NSFW
+		event.user.remove_role(341868734002102274) # NSFW
+		event.respond "You no longer have the NSFW role. :egg:"
+	else
+		event.user.add_role(341868734002102274) # NSFW
+		event.respond "You now have the NSFW role. :egg:"
+	end
+end
+
+bot.command(:moderator, min_args: 1, max_args: 1) do |event, user|
+	if event.author.roles.include?(340131665382998016) # Admin
+		user = user[2..-2]
+		begin
+			tagged_user = bot.member(event.server.id, user);
+			if tagged_user.roles.include?(340131669354741762) # Mod
+				tagged_user.remove_role(340131669354741762) # Mod
+				event.respond "#{event.author.mention}, I removed #{tagged_user.mention}'s Moderator role. :egg:"
+			else
+				tagged_user.add_role(340131669354741762) # Mod
+				event.respond "#{event.author.mention}, I made #{tagged_user.mention} a Moderator. :egg:"
+			end
+		rescue
+			event.respond "That's not a user. Usage: `.moderator @user`"
+		end
+	else
+		event.respond "You're not allowed to add the Moderator role to anyone."
+	end
+end
+
 trap('INT') do
     exit
 end
