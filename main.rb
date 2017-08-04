@@ -69,9 +69,29 @@ end
 
 bot.member_join do |event|
 	event.user.add_role(340470911910281216)
+	channel = bot.channel(340455650217820172, event.server.id)
+		channel.send_embed do |embed|
+			embed.title = 'User joined'
+			embed.description = "#{event.user.mention} joined the server."
+			embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: event.user.id.to_s, icon_url: event.server.icon_url.to_s)
+			embed.color = 1_151_202
+			embed.author = Discordrb::Webhooks::EmbedAuthor.new(name:("%s#%s" % [event.user.name, event.user.discrim]), icon_url: event.user.avatar_url)
+		end
+end
+
+bot.member_leave do |event|
+	channel = bot.channel(340455650217820172, event.server.id)
+		channel.send_embed do |embed|
+			embed.title = 'User left'
+			embed.description = "#{event.user.mention} left the server."
+			embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: event.user.id.to_s, icon_url: event.server.icon_url.to_s)
+			embed.color = 1_151_202
+			embed.author = Discordrb::Webhooks::EmbedAuthor.new(name:("%s#%s" % [event.user.name, event.user.discrim]), icon_url: event.user.avatar_url)
+		end
 end
 
 bot.command(:team, usage: ".team hard-boiled | soft-boiled") do |event, *args|
+event.message.delete
 	if args.length == 0 || args.length > 1
 		event.respond "Usage: `.team hard-boiled | soft-boiled`"
 		next
