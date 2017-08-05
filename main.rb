@@ -48,9 +48,9 @@ bot.command(:talk) do |event, *args|
 end
 
 bot.command(:ping) do |event|
-        now = Time.now
-        timestamp = event.timestamp
-        diff = (now - timestamp) / 1_000_000
+        now = Time.now.utc.nsec
+		timestamp = event.timestamp.nsec
+		diff = (now - timestamp) / 1000000
         event.channel.send_embed do |embed|
             embed.title = 'Egg Manager Ping'
             embed.description = "I ain't gone, but I'm pinging in **#{diff}** ms.. is that good?"
